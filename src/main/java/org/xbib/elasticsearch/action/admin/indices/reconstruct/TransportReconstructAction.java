@@ -109,7 +109,7 @@ public class TransportReconstructAction extends TransportBroadcastOperationActio
         } catch (IOException e) {
             throw new ElasticsearchException("failed to reconstruct index", e);
         } finally {
-            searcher.release();
+            searcher.close();
         }
     }
 

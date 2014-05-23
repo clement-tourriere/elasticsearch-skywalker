@@ -60,7 +60,7 @@ public class TransportConsistencyCheckAction extends TransportMasterNodeOperatio
 
     @Override
     protected void masterOperation(ConsistencyCheckRequest request, ClusterState state, ActionListener<ConsistencyCheckResponse> listener) throws ElasticsearchException {
-        ClusterState.Builder builder = builder();
+        ClusterState.Builder builder = builder(state);
         List<File> files = new ArrayList();
         builder.metaData(Skywalker.loadState(files, nodeEnv));
         listener.onResponse(new ConsistencyCheckResponse(clusterName, builder.build(), files));

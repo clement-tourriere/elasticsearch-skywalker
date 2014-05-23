@@ -3,6 +3,7 @@ package org.xbib.elasticsearch.rest.action.skywalker;
 
 import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.common.Strings;
+import org.elasticsearch.rest.*;
 import org.xbib.elasticsearch.action.skywalker.SkywalkerAction;
 import org.xbib.elasticsearch.action.skywalker.SkywalkerRequest;
 import org.xbib.elasticsearch.action.skywalker.SkywalkerResponse;
@@ -10,13 +11,6 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.common.inject.Inject;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.rest.BaseRestHandler;
-import org.elasticsearch.rest.RestChannel;
-import org.elasticsearch.rest.RestController;
-import org.elasticsearch.rest.RestRequest;
-import org.elasticsearch.rest.XContentRestResponse;
-import org.elasticsearch.rest.XContentThrowableRestResponse;
-import org.elasticsearch.rest.action.support.RestXContentBuilder;
 
 import java.io.IOException;
 
@@ -47,13 +41,13 @@ public class RestSkywalkerAction extends BaseRestHandler {
             @Override
             public void onResponse(SkywalkerResponse response) {
                 try {
-                    XContentBuilder builder = RestXContentBuilder.restContentBuilder(request);
+                    XContentBuilder builder = channel.newBuilder();
                     builder.startObject();
                     builder.field("ok", true);
                     buildBroadcastShardsHeader(builder, response);
                     builder.field("result", response.getResponse());
                     builder.endObject();
-                    channel.sendResponse(new XContentRestResponse(request, OK, builder));
+                    channel.sendResponse(new BytesRestResponse(OK, builder));
                 } catch (Exception e) {
                     onFailure(e);
                 }
@@ -63,7 +57,7 @@ public class RestSkywalkerAction extends BaseRestHandler {
             public void onFailure(Throwable e) {
                 try {
                     logger.error(e.getMessage(), e);
-                    channel.sendResponse(new XContentThrowableRestResponse(request, e));
+                    channel.sendResponse(new BytesRestResponse(channel, e));
                 } catch (IOException e1) {
                     logger.error("Failed to send failure response", e1);
                 }

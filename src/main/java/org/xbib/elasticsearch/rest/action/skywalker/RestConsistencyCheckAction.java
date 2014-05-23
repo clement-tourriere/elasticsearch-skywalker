@@ -10,13 +10,7 @@ import org.elasticsearch.common.unit.SizeUnit;
 import org.elasticsearch.common.unit.SizeValue;
 import org.elasticsearch.common.xcontent.ToXContent;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.rest.BaseRestHandler;
-import org.elasticsearch.rest.RestChannel;
-import org.elasticsearch.rest.RestController;
-import org.elasticsearch.rest.RestRequest;
-import org.elasticsearch.rest.XContentRestResponse;
-import org.elasticsearch.rest.XContentThrowableRestResponse;
-import org.elasticsearch.rest.action.support.RestXContentBuilder;
+import org.elasticsearch.rest.*;
 import org.xbib.elasticsearch.action.admin.cluster.state.ConsistencyCheckAction;
 import org.xbib.elasticsearch.action.admin.cluster.state.ConsistencyCheckRequest;
 import org.xbib.elasticsearch.action.admin.cluster.state.ConsistencyCheckResponse;
@@ -46,7 +40,7 @@ public class RestConsistencyCheckAction extends BaseRestHandler {
             @Override
             public void onResponse(ConsistencyCheckResponse response) {
                 try {
-                    XContentBuilder builder = RestXContentBuilder.restContentBuilder(request);
+                    XContentBuilder builder = channel.newBuilder();
                     builder.startObject();
                     builder.field("ok", true);
                     builder.startObject("state");
@@ -65,7 +59,7 @@ public class RestConsistencyCheckAction extends BaseRestHandler {
                     }
                     builder.endArray();
                     builder.endObject();
-                    channel.sendResponse(new XContentRestResponse(request, OK, builder));
+                    channel.sendResponse(new BytesRestResponse(OK, builder));
                 } catch (Exception e) {
                     onFailure(e);
                 }
@@ -75,7 +69,7 @@ public class RestConsistencyCheckAction extends BaseRestHandler {
             public void onFailure(Throwable e) {
                 try {
                     logger.error(e.getMessage(), e);
-                    channel.sendResponse(new XContentThrowableRestResponse(request, e));
+                    channel.sendResponse(new BytesRestResponse(channel, e));
                 } catch (IOException e1) {
                     logger.error("Failed to send failure response", e1);
                 }

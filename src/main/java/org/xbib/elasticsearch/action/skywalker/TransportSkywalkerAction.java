@@ -213,7 +213,7 @@ public class TransportSkywalkerAction
             } catch (Exception ex) {
                 throw new ElasticsearchException(ex.getMessage(), ex);
             } finally {
-                searcher.release();
+                searcher.close();
             }
         }
     }

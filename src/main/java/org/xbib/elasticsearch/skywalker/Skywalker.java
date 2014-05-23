@@ -204,10 +204,10 @@ public class Skywalker implements LuceneFormats {
                     if (indexFormat == CodecUtil.CODEC_MAGIC) {
                         res.setCapabilities("flexible, codec-specific");
                         res.setGenericName("Lucene 4.x");
-                        int actualVersion = SegmentInfos.VERSION_40;
+                        int actualVersion = SegmentInfos.VERSION_48;
                         try {
-                            actualVersion = CodecUtil.checkHeaderNoMagic(in, "segments", SegmentInfos.VERSION_40, Integer.MAX_VALUE);
-                            if (actualVersion > SegmentInfos.VERSION_40) {
+                            actualVersion = CodecUtil.checkHeaderNoMagic(in, "segments", SegmentInfos.VERSION_48, Integer.MAX_VALUE);
+                            if (actualVersion > SegmentInfos.VERSION_48) {
                                 res.setCapabilities(res.getCapabilities() + " (WARNING: newer version of Lucene than this tool)");
                             }
                         } catch (Exception e) {
